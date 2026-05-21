@@ -1,7 +1,7 @@
 "use client";
 
-import { getPopular, getTrending } from "@/utils/tmdb";
-import React, { useEffect, useState } from "react";
+import { getPopular, getTopRated, getTrending } from "@/utils/tmdb";
+import { useEffect, useState } from "react";
 
 // 1. Define what a Movie object looks like
 interface Movie {
@@ -31,22 +31,37 @@ function Page() {
     //   }
     // };
 
-    const fetchPopular = async () => {
+    // const fetchPopular = async () => {
+    //   try {
+    //     const data = await getPopular();
+
+    //     if (data && data.results) {
+    //       setTrendingMovies(data.results);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching popular movies:", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+
+    const fetchTopRated = async () => {
       try {
-        const data = await getPopular();
+        const data = await getTopRated();
 
         if (data && data.results) {
           setTrendingMovies(data.results);
         }
       } catch (error) {
-        console.error("Error fetching popular movies:", error);
+        console.error("Error fetching top_rated movies:", error);
       } finally {
         setLoading(false);
       }
     };
 
     // fetchTrendingMovies();
-    fetchPopular();
+    // fetchPopular();
+    fetchTopRated();
   }, []);
 
   return (
