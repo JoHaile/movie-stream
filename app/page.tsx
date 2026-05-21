@@ -1,6 +1,6 @@
 "use client";
 
-import { getTrending } from "@/utils/tmdb";
+import { getPopular, getTrending } from "@/utils/tmdb";
 import React, { useEffect, useState } from "react";
 
 // 1. Define what a Movie object looks like
@@ -17,24 +17,36 @@ function Page() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchTrendingMovies = async () => {
-      try {
-        const data = await getTrending();
+    // const fetchTrendingMovies = async () => {
+    //   try {
+    //     const data = await getTrending();
 
-        // Safety check: Make sure we got data and results back
-        // If your utility returns 'response.data', then 'data.results' is correct.
-        // If your utility returns 'response', you might need 'data.data.results'.
+    //     if (data && data.results) {
+    //       setTrendingMovies(data.results);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching trending movies:", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
+
+    const fetchPopular = async () => {
+      try {
+        const data = await getPopular();
+
         if (data && data.results) {
           setTrendingMovies(data.results);
         }
       } catch (error) {
-        console.error("Error fetching trending movies:", error);
+        console.error("Error fetching popular movies:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchTrendingMovies();
+    // fetchTrendingMovies();
+    fetchPopular();
   }, []);
 
   return (
