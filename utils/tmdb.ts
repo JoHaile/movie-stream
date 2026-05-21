@@ -5,8 +5,8 @@ import axios, { AxiosRequestConfig } from "axios";
 const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = "https://api.themoviedb.org/3";
 
-type MediaTypeTrending = "movie" | "tv" | "all";
-type MediaTypePopular = "movie" | "tv";
+export type MediaTypeTrending = "movie" | "tv" | "all";
+export type MediaTypePopular = "movie" | "tv";
 
 export async function getTrending(
   mediaType: MediaTypeTrending = "all",

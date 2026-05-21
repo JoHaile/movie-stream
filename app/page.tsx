@@ -1,10 +1,11 @@
 "use client";
 
 import { getPopular, getTopRated, getTrending } from "@/utils/tmdb";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 
 // 1. Define what a Movie object looks like
-interface Movie {
+export interface Movie {
   id: number;
   title?: string;
   name?: string; // TMDB uses 'name' for TV shows and 'title' for movies
@@ -17,19 +18,19 @@ function Page() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // const fetchTrendingMovies = async () => {
-    //   try {
-    //     const data = await getTrending();
+    const fetchTrendingMovies = async () => {
+      try {
+        const data = await getTrending();
 
-    //     if (data && data.results) {
-    //       setTrendingMovies(data.results);
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching trending movies:", error);
-    //   } finally {
-    //     setLoading(false);
-    //   }
-    // };
+        if (data && data.results) {
+          setTrendingMovies(data.results);
+        }
+      } catch (error) {
+        console.error("Error fetching trending movies:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
 
     // const fetchPopular = async () => {
     //   try {
@@ -45,23 +46,23 @@ function Page() {
     //   }
     // };
 
-    const fetchTopRated = async () => {
-      try {
-        const data = await getTopRated();
+    // const fetchTopRated = async () => {
+    //   try {
+    //     const data = await getTopRated();
 
-        if (data && data.results) {
-          setTrendingMovies(data.results);
-        }
-      } catch (error) {
-        console.error("Error fetching top_rated movies:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
+    //     if (data && data.results) {
+    //       setTrendingMovies(data.results);
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching top_rated movies:", error);
+    //   } finally {
+    //     setLoading(false);
+    //   }
+    // };
 
-    // fetchTrendingMovies();
+    fetchTrendingMovies();
     // fetchPopular();
-    fetchTopRated();
+    // fetchTopRated();
   }, []);
 
   return (
@@ -73,7 +74,11 @@ function Page() {
       ) : (
         <ul className="list-disc pl-5">
           {trendingMovies.map((movie) => (
-            <li key={movie.id}>{movie.title || movie.name}</li>
+            <li key={movie.id}>
+              <Link href={`/movies/${movie.id}`}>
+                {movie.title || movie.name || "Untitled Movie"}
+              </Link>
+            </li>
           ))}
         </ul>
       )}
