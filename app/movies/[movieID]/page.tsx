@@ -14,18 +14,23 @@ export default async function Page({ params }: Props) {
     ? `https://image.tmdb.org/t/p/w500${movieData.poster_path}`
     : null;
 
-  const getEmbedUrl = (movieID: String) => {
-    return `https://vsembed.ru/embed/movie/${movieID}/?autoplay=1&muted=1`;
+  const getEmbedUrl = (id: string) => {
+    const safeMovieId = encodeURIComponent(id);
+
+    return `https://vsembed.ru/embed/movie/${safeMovieId}/?autoplay=1&muted=1`;
   };
 
   return (
     <div className="w-full p-4">
-      <iframe
-        src={getEmbedUrl(movieID)}
-        className="w-full h-full border-none"
-        allowFullScreen
-        referrerPolicy="no-referrer"
-      />
+      <div className="relative mx-auto mb-6 aspect-video w-full overflow-hidden rounded-lg bg-black lg:w-[80%]">
+        <iframe
+          src={getEmbedUrl(movieID)}
+          title={movieData.title || movieData.name || "Movie player"}
+          className="absolute inset-0 h-full w-full border-none"
+          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+          allowFullScreen
+        />
+      </div>
 
       {posterUrl ? (
         <div className="relative w-[95%] lg:w-[80%] h-125 md lg:h-112.5 mb-4 mx-auto rounded-lg overflow-hidden">

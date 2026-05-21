@@ -20,7 +20,7 @@ function Page() {
   useEffect(() => {
     const fetchTrendingMovies = async () => {
       try {
-        const data = await getTrending();
+        const data = await getTrending("movie");
 
         if (data && data.results) {
           setTrendingMovies(data.results);
