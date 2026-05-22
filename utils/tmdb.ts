@@ -86,3 +86,44 @@ export async function getTopRated(
     throw new Error("Failed to fetch top_rated movies");
   }
 }
+
+export async function getTVDetails(seriesId: string) {
+  const options: AxiosRequestConfig = {
+    method: "GET",
+    url: `${TMDB_BASE_URL}/tv/${seriesId}?append_to_response=videos,credits`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${TMDB_API_KEY}`,
+    },
+  };
+
+  try {
+    const response = await axios.request(options);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching TV details from TMDB:", error);
+    throw new Error("Failed to fetch TV details");
+  }
+}
+
+export async function getTVSeasonDetails(
+  seriesId: string,
+  seasonNumber: number,
+) {
+  const options: AxiosRequestConfig = {
+    method: "GET",
+    url: `${TMDB_BASE_URL}/tv/${seriesId}/season/${seasonNumber}`,
+    headers: {
+      accept: "application/json",
+      Authorization: `Bearer ${TMDB_API_KEY}`,
+    },
+  };
+
+  try {
+    const response = await axios.request(options);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching TV season details from TMDB:", error);
+    throw new Error("Failed to fetch TV season details");
+  }
+}
