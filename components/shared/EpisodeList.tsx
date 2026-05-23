@@ -36,7 +36,11 @@ interface EpisodeListProps {
   seasons: Season[];
   initialEpisodes: Episode[];
   initialSeason: number;
-  onEpisodeSelect?: (seasonNum: number, episodeNum: number) => void;
+  onEpisodeSelect?: (
+    seasonNum: number,
+    episodeNum: number,
+    episode?: Episode,
+  ) => void;
   currentEpisode?: { season: number; episode: number };
 }
 
@@ -49,15 +53,16 @@ export default function EpisodeList({
   currentEpisode,
 }: EpisodeListProps) {
   const [selectedSeason, setSelectedSeason] = useState(initialSeason);
-  const [episodes, setEpisodes] = useState<Episode[]>(initialEpisodes);
+  const [loadedEpisodes, setLoadedEpisodes] = useState<Episode[]>(initialEpisodes);
   const [loading, setLoading] = useState(false);
+  const episodes =
+    selectedSeason === initialSeason ? initialEpisodes : loadedEpisodes;
 
   // Filter out season 0 (specials) for cleaner UX
   const filteredSeasons = seasons.filter((s) => s.season_number > 0);
 
   useEffect(() => {
     if (selectedSeason === initialSeason) {
-      setEpisodes(initialEpisodes);
       return;
     }
 
@@ -66,7 +71,14 @@ export default function EpisodeList({
       try {
         const data = await getTVSeasonDetails(seriesId, selectedSeason);
         if (data && data.episodes) {
-          setEpisodes(data.episodes);
+          setLoadedEpisodes(data.episodes);
+          if (data.episodes[0]) {
+            onEpisodeSelect?.(
+              selectedSeason,
+              data.episodes[0].episode_number,
+              data.episodes[0],
+            );
+          }
         }
       } catch (error) {
         console.error("Error fetching season:", error);
@@ -76,7 +88,7 @@ export default function EpisodeList({
     };
 
     fetchSeason();
-  }, [selectedSeason, seriesId, initialSeason, initialEpisodes]);
+  }, [selectedSeason, seriesId, initialSeason, initialEpisodes, onEpisodeSelect]);
 
   const handleSeasonChange = (value: string | null) => {
     if (value) {
@@ -94,13 +106,13 @@ export default function EpisodeList({
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold">Episodes</h3>
         <Select
-          defaultValue={String(selectedSeason)}
+          value={String(selectedSeason)}
           onValueChange={handleSeasonChange}
         >
-          <SelectTrigger className="min-w-[130px]">
+          <SelectTrigger className="min-w-[130px] border-white/10 bg-black/20 text-slate-100 hover:bg-black/30">
             <SelectValue placeholder="Select season" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="border border-white/10 bg-[#0b1524] text-slate-100">
             {filteredSeasons.map((season) => (
               <SelectItem
                 key={season.id}
@@ -135,14 +147,16 @@ export default function EpisodeList({
             <button
               key={ep.id}
               onClick={() =>
-                onEpisodeSelect?.(ep.season_number, ep.episode_number)
+                onEpisodeSelect?.(ep.season_number, ep.episode_number, ep)
               }
-              className={`episode-card flex gap-3 p-3 rounded-xl text-left w-full ${
-                isActive(ep) ? "active" : ""
+              className={`flex w-full gap-3 rounded-2xl border p-3 text-left transition ${
+                isActive(ep)
+                  ? "border-sky-300/40 bg-sky-300/10"
+                  : "border-white/[0.08] bg-black/20 hover:border-white/[0.14] hover:bg-white/[0.04]"
               }`}
             >
               {/* Episode thumbnail */}
-              <div className="relative w-28 h-16 rounded-lg overflow-hidden bg-muted flex-shrink-0">
+              <div className="relative h-16 w-28 flex-shrink-0 overflow-hidden rounded-lg bg-muted">
                 {ep.still_path ? (
                   <Image
                     src={`https://image.tmdb.org/t/p/w300${ep.still_path}`}
@@ -170,16 +184,16 @@ export default function EpisodeList({
 
               {/* Episode info */}
               <div className="flex-1 min-w-0">
-                <span className="text-xs text-muted-foreground font-medium">
+                <span className="text-xs font-medium text-slate-400">
                   Episode {ep.episode_number}
                 </span>
-                <h4 className="text-sm font-semibold leading-tight line-clamp-1 mt-0.5">
+                <h4 className="mt-0.5 line-clamp-1 text-sm font-semibold leading-tight text-slate-100">
                   {ep.name}
                 </h4>
                 {ep.runtime && (
                   <div className="flex items-center gap-1 mt-1">
-                    <ClockIcon className="w-3 h-3 text-muted-foreground" />
-                    <span className="text-xs text-muted-foreground">
+                    <ClockIcon className="h-3 w-3 text-slate-500" />
+                    <span className="text-xs text-slate-400">
                       {ep.runtime}m
                     </span>
                   </div>

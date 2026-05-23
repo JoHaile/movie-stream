@@ -1,8 +1,9 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import Link from "next/link";
 import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
-import MediaCard, { MediaCardProps } from "./MediaCard";
+import MediaCard from "./MediaCard";
 
 // Common TMDB genre mappings
 const movieGenres: Record<number, string> = {
@@ -104,12 +105,12 @@ export default function MediaRow({
           {title}
         </h2>
         {seeAllHref && (
-          <a
+          <Link
             href={seeAllHref}
             className="text-sm text-muted-foreground hover:text-foreground transition-colors font-medium"
           >
             See All
-          </a>
+          </Link>
         )}
       </div>
 
